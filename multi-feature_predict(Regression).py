@@ -20,6 +20,7 @@ print(f'y_train array: \n{y_super_train}')
 print(f"y Shape: {y_super_train.shape}, y Type:{type(y_super_train)})\n")
 
 
+# -----------------------------------------------------------------------------------------------------------------
 def zscore_normalize_features(X):
     """
     computes  X, zcore normalized by column
@@ -50,6 +51,7 @@ print(f"Peak to Peak range by column in Raw        X:{np.ptp(X_super_train,axis=
 print(f"Peak to Peak range by column in Normalized X:{np.ptp(X_norm,axis=0)}")
 
 
+# -----------------------------------------------------------------------------------------------------------------
 def predict_single_loop(x, w, b):
     """
     single predict using linear regression
@@ -71,6 +73,7 @@ def predict_single_loop(x, w, b):
     return p
 
 
+# -----------------------------------------------------------------------------------------------------------------
 def predict(x, w, b):
     """
     single predict using linear regression
@@ -86,6 +89,7 @@ def predict(x, w, b):
     return p
 
 
+# -----------------------------------------------------------------------------------------------------------------
 def compute_cost(X, y, w, b):
     """
     compute cost
@@ -107,6 +111,7 @@ def compute_cost(X, y, w, b):
     return cost
 
 
+# -----------------------------------------------------------------------------------------------------------------
 def compute_gradient(X, y, w, b):
     """
     Computes the gradient for linear regression
@@ -135,6 +140,7 @@ def compute_gradient(X, y, w, b):
     return dj_db, dj_dw
 
 
+# -----------------------------------------------------------------------------------------------------------------
 def gradient_descent(X, y, w_in, b_in, cost_function, gradient_function, alpha, num_iters):
     """
     Performs batch gradient descent to learn theta. Updates theta by taking
@@ -181,6 +187,7 @@ def gradient_descent(X, y, w_in, b_in, cost_function, gradient_function, alpha, 
                   f"{dj_dw[0]:12.2f} {dj_dw[1]:13.2f} {dj_dw[2]:13.2f} {dj_dw[3]:13.2f} {dj_db:12.2f} ")
 
     return w, b, J_history  # return final w,b and J history for graphing
+# -----------------------------------------------------------------------------------------------------------------
 
 
 # initialize parameters
