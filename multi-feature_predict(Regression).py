@@ -86,6 +86,7 @@ def predict(x, w, b):
       p (scalar):  prediction
     """
     p = np.dot(x, w) + b
+
     return p
 
 
