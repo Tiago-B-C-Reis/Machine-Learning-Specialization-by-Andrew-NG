@@ -6,12 +6,14 @@ authors = ["Tiago Reis <Tiago.B.C.Reis@hotmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9, <3.11"
 numpy = "1.23.0"
 matplotlib = "3.6.0"
-# lab-utils = "0.5.12"
-#libpq-dev = "15.0"
+lab-utils = "0.5.12"
+psycopg2 = "^2.9"
 pandas = "1.5.0"
+tensorflow = "2.10.0"
+scikit-learn = "1.1.2"
 
 
 [build-system]

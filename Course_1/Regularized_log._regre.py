@@ -13,7 +13,7 @@ from Data_base import X_train, y_train
 # it can become to complex and that will result in an overfitt model.
 # That's when "regularization" enters, to stop the current complex function to overfitt the model.
 
-## On this
+# On this
 
 
 # -----------------------------------------------------------------------------------------------------------------
