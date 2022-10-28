@@ -25,9 +25,9 @@ print("L1 params = ", L1_num_params, ", L2 params = ", L2_num_params, ",  L3 par
 
 [layer1, layer2, layer3] = model.layers
 # Examine Weights shapes
-W1,b1 = layer1.get_weights()
-W2,b2 = layer2.get_weights()
-W3,b3 = layer3.get_weights()
+W1, b1 = layer1.get_weights()
+W2, b2 = layer2.get_weights()
+W3, b3 = layer3.get_weights()
 print(f"W1 shape = {W1.shape}, b1 shape = {b1.shape}")
 print(f"W2 shape = {W2.shape}, b2 shape = {b2.shape}")
 print(f"W3 shape = {W3.shape}, b3 shape = {b3.shape}")

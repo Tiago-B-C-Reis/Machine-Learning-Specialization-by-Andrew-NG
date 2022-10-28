@@ -66,3 +66,28 @@ print("largest value", np.max(sm_preferred), "smallest value", np.min(sm_preferr
 # largest output using [np.argmax()]
 for i in range(5):
     print(f"{p_preferred[i]}, category: {np.argmax(p_preferred[i])}")
+
+# ---------------------------------------------//------------------------------------------------------------
+# Softmax with Numpy:
+
+
+def my_softmax(z):
+    """ Softmax converts a vector of values to a probability distribution.
+    Args:
+      z (ndarray (N,))  : input data, N features
+    Returns:
+      a (ndarray (N,))  : softmax of z
+    """
+
+    ez = np.exp(z)
+    sm = ez / np.sum(ez)
+
+    return sm
+
+
+z = np.array([1., 2., 3., 4.])
+a = my_softmax(z)
+atf = tf.nn.softmax(z)
+print(f"my_softmax(z):         {a}")
+print(f"tensorflow softmax(z): {atf}")
+
