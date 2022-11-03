@@ -1,6 +1,5 @@
 # 1
 import numpy as np
-%matplotlib widget
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
