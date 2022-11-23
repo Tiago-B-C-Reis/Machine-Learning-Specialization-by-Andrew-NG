@@ -136,7 +136,7 @@ sorted_index = np.argsort(-y_pu,axis=0).reshape(-1).tolist()  # negate to get la
 sorted_ypu = y_pu[sorted_index]
 sorted_items = item_vecs[sorted_index]  # using unscaled vectors for display
 
-print_pred_movies(sorted_ypu, sorted_items, movie_dict, maxcount = 50)
+print_pred_movies(sorted_ypu, sorted_items, movie_dict, maxcount=50)
 
 
 # 2. -----------------------------------------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ sorted_user = user_vecs[sorted_index]
 sorted_y = y_vecs[sorted_index]
 
 # print sorted predictions for movies rated by the user
-print_existing_user(sorted_ypu, sorted_y.reshape(-1,1), sorted_user, sorted_items, ivs, uvs, movie_dict, maxcount=50)
+print_existing_user(sorted_ypu, sorted_y.reshape(-1, 1), sorted_user, sorted_items, ivs, uvs, movie_dict, maxcount=50)
 
 
 # 3. -----------------------------------------------------------------------------------------------------------------
