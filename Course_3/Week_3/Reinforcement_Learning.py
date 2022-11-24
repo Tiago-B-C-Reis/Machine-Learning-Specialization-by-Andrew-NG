@@ -13,6 +13,10 @@ from keras.optimizers import Adam
 import logging
 
 
+# Set up a virtual display to render the Lunar Lander environment.
+Display(visible=0, size=(840, 480)).start()
+
+# Set the random seed for TensorFlow.
 tf.random.set_seed(utils.SEED)
 
 # Hyper-parameters
@@ -62,6 +66,10 @@ target_q_network = Sequential([
 
 optimizer = Adam(learning_rate=ALPHA)
 # --------------------------------------------------------------------------------------------------------------------
+
+# Experience Replay
+# Store experiences as named tuples.
+experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"])
 
 
 # Line 12 of "Algorithm 1"--------------------------------------------------------------------------------------------

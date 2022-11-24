@@ -1,6 +1,34 @@
+# Anomaly detection
 import numpy as np
 import matplotlib.pyplot as plt
+from Package_2 import utils
 import math
+
+# Load the dataset
+X_train, X_val, y_val = utils.load_data()
+
+# Display the first five elements of X_train
+print("The first 5 elements of X_train are:\n", X_train[:5])
+# Display the first five elements of X_val
+print("The first 5 elements of X_val are\n", X_val[:5])
+# Display the first five elements of y_val
+print("The first 5 elements of y_val are\n", y_val[:5])
+print('The shape of X_train is:', X_train.shape)
+print('The shape of X_val is:', X_val.shape)
+print('The shape of y_val is: ', y_val.shape, y_val[y_val == 1].shape)
+
+# Create a scatter plot of the data. To change the markers to blue "x",
+# we used the 'marker' and 'c' parameters
+plt.scatter(X_train[:, 0], X_train[:, 1], marker='x', c='b')
+# Set the title
+plt.title("The first dataset")
+# Set the y-axis label
+plt.ylabel('Throughput (mb/s)')
+# Set the x-axis label
+plt.xlabel('Latency (ms)')
+# Set axis range
+plt.axis([0, 30, 0, 30])
+plt.show()
 
 
 # GRADED FUNCTION: estimate_gaussian -----------------------------------------------------------------------
@@ -28,6 +56,19 @@ def estimate_gaussian(X):
 # -----------------------------------------------------------------------------------------------------------
 
 
+# Estimate mean and variance of each feature
+mu, var = estimate_gaussian(X_train)
+print("Mean of each feature:", mu)
+print("Variance of each feature:", var)
+
+# Returns the density of the multivariate normal
+# at each data point (row) of X_train
+p = utils.multivariate_gaussian(X_train, mu, var)
+# Plotting code
+utils.visualize_fit(X_train, mu, var)
+
+
+# I have created this function but this file is importing one from 'utils' package.
 def multivariate_gaussian(X, mu, var):
     """Calculates the 'Anomaly detection algorithm' for multi-variable X database."""
 
@@ -82,8 +123,22 @@ def select_threshold(y_val, p_val):
 # -----------------------------------------------------------------------------------------------------------
 
 
-# This part implements the functions above, but for thar I would need the have access to the database.
-X_train_high, X_val_high, y_val_high = load_data_multi()
+p_val = multivariate_gaussian(X_val, mu, var)
+epsilon, F1 = select_threshold(y_val, p_val)
+print(f'Best epsilon found using cross-validation: {epsilon}')
+print(f'Best F1 on Cross Validation Set: {F1}')
+
+# Find the outliers in the training set
+outliers = p < epsilon
+# Visualize the fit
+utils.visualize_fit(X_train, mu, var)
+# Draw a red circle around those outliers
+plt.plot(X_train[outliers, 0], X_train[outliers, 1], 'ro',
+         markersize=10, markerfacecolor='none', markeredgewidth=2)
+
+
+# load the dataset
+X_train_high, X_val_high, y_val_high = utils.load_data_multi()
 print('The shape of X_train_high is:', X_train_high.shape)
 print('The shape of X_val_high is:', X_val_high.shape)
 print('The shape of y_val_high is: ', y_val_high.shape)

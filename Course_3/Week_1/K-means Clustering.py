@@ -1,5 +1,7 @@
+# K-means Clustering
 import numpy as np
-import data_set
+import matplotlib.pyplot as plt
+from Package_1 import utils
 
 
 # Random initialization - It's a method that randomly associates K centroids 'coordinates' to some X(i) in order
@@ -57,6 +59,19 @@ def find_closest_centroids(X, centroids):
 # -------------------------------------------------------------------------------------------------------------
 
 
+# Load an example dataset that we will be using
+X = utils.load_data()
+print("First five elements of X are:\n", X[:5])
+print('The shape of X is:', X.shape)
+
+# Select an initial set of centroids (3 Centroids)
+initial_centroids = np.array([[3, 3], [6, 2], [8, 5]])
+# Find the closest centroids using initial_centroids
+idx = find_closest_centroids(X, initial_centroids)
+# Print closest centroids for the first three elements
+print("First three elements in idx are:", idx[:3])
+
+
 # This function calculates the mean for each C(i) using its related X(i) and relocates the centroid to be more in
 # the center of its cluster.
 def compute_centroids(X, idx, K):
@@ -85,6 +100,11 @@ def compute_centroids(X, idx, K):
 
     return centroids
 # -------------------------------------------------------------------------------------------------------------
+
+
+K = 3
+centroids = compute_centroids(X, idx, K)
+print("The centroids are:\n", centroids)
 
 
 # This function uses the two functions above to relocate the centroids x times, depending on the nº of iterations
@@ -120,14 +140,60 @@ def run_kMeans(X, initial_centroids, max_iters=50):
 
 
 # Load an example dataset
-X = data_set.X
+X = utils.load_data()
 
 # Set initial centroids
+initial_centroids = np.array([[3, 3], [6, 2], [8, 5]])
 K = 3
-initial_centroids = kMeans_init_centroids(X, K)
 
 # Number of iterations
 max_iters = 100
 
-centroids, idx = run_kMeans(X, initial_centroids, max_iters)
+centroids, idx = run_kMeans(X, initial_centroids, max_iters, plot_progress=True)
 print("The centroids are:\n", centroids)
+
+
+# Load an image of a bird
+original_img = plt.imread('bird_small.png')
+# Visualizing the image
+plt.imshow(original_img)
+print("Shape of original_img is:", original_img.shape)
+
+# Divide by 255 so that all values are in the range 0 - 1
+original_img = original_img / 255
+# Reshape the image into an m x 3 matrix where m = number of pixels
+# (in this case m = 128 x 128 = 16384)
+# Each row will contain the Red, Green and Blue pixel values
+# This gives us our dataset matrix X_img that we will use K-Means on.
+X_img = np.reshape(original_img, (original_img.shape[0] * original_img.shape[1], 3))
+
+# Run your K-Means algorithm on this data
+# You should try different values of K and max_iters here
+K = 16
+max_iters = 10
+# Using the function you have implemented above.
+initial_centroids = kMeans_init_centroids(X_img, K)
+# Run K-Means - this takes a couple of minutes
+centroids, idx = run_kMeans(X_img, initial_centroids, max_iters)
+
+print("Shape of idx:", idx.shape)
+print("Closest centroid for the first five elements:", idx[:5])
+
+# Represent image in terms of indices
+X_recovered = centroids[idx, :]
+# Reshape recovered image into proper dimensions
+X_recovered = np.reshape(X_recovered, original_img.shape)
+
+
+# Display original image
+fig, ax = plt.subplots(1, 2, figsize=(8, 8))
+plt.axis('off')
+
+ax[0].imshow(original_img*255)
+ax[0].set_title('Original')
+ax[0].set_axis_off()
+
+# Display compressed image
+ax[1].imshow(X_recovered*255)
+ax[1].set_title(f'Compressed with %d colours{K}')
+ax[1].set_axis_off()

@@ -1,6 +1,5 @@
 # We will use familiar packages, NumPy, TensorFlow and helpful routines from scikit-learn.
 # We will also use tabulate to neatly print tables and Pandas to organize tabular data.
-
 import numpy as np
 import numpy.ma as ma
 import pandas as pd
@@ -8,10 +7,28 @@ import tensorflow as tf
 from tensorflow import keras
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import train_test_split
-# import tabulate
+import tabulate
+from Package_2 import recsysNN_utils
 pd.set_option("display.precision", 1)
 
-top10_df = pd.read_csv("./Content_based_filtering_data/movies.csv")
+top10_df = pd.read_csv("./data/content_top10_df.csv")
+bygenre_df = pd.read_csv("./data/content_bygenre_df.csv")
+print(top10_df)
+print(bygenre_df)
+
+# Load Data, set configuration variables
+item_train, user_train, y_train, item_features, user_features, item_vecs, movie_dict, user_to_genre = \
+    recsysNN_utils.load_data()
+num_user_features = user_train.shape[1] - 3  # remove userid, rating count and ave rating during training
+num_item_features = item_train.shape[1] - 1  # remove movie id at train time
+uvs = 3  # user genre vector start
+ivs = 3  # item genre vector start
+u_s = 3  # start of columns to use in training, user
+i_s = 1  # start of columns to use in training, items
+print(f"Number of training vectors: {len(item_train)}")
+recsysNN_utils.pprint_train(user_train, user_features, uvs,  u_s, maxcount=5)
+recsysNN_utils.pprint_train(item_train, item_features, ivs, i_s, maxcount=5, user=False)
+print(f"y_train[:5]: {y_train[:5]}")
 
 # Preparing the training data ----------------------------------------------------------------------------------------
 # scale training data
@@ -42,6 +59,7 @@ user_train, user_test = train_test_split(user_train, train_size=0.80, shuffle=Tr
 y_train, y_test = train_test_split(y_train,    train_size=0.80, shuffle=True, random_state=1)
 print(f"movie/item training data shape: {item_train.shape}")
 print(f"movie/item test data shape: {item_test.shape}")
+recsysNN_utils.pprint_train(user_train, user_features, uvs, u_s, maxcount=5)
 # --------------------------------------------------------------------------------------------------------------------
 
 # Neural Network for content-based filtering -------------------------------------------------------------------------
@@ -119,7 +137,7 @@ user_vec = np.array([[new_user_id, new_rating_count, new_rating_ave,
                       new_romance, new_scifi, new_thriller]])
 
 # generate and replicate the user vector to match the number movies in the data set.
-user_vecs = gen_user_vecs(user_vec,len(item_vecs))
+user_vecs = recsysNN_utils.gen_user_vecs(user_vec, len(item_vecs))
 
 # scale our user and item vectors
 suser_vecs = scalerUser.transform(user_vecs)
@@ -132,17 +150,17 @@ y_p = model.predict([suser_vecs[:, u_s:], sitem_vecs[:, i_s:]])
 y_pu = scalerTarget.inverse_transform(y_p)
 
 # sort the results, highest prediction first
-sorted_index = np.argsort(-y_pu,axis=0).reshape(-1).tolist()  # negate to get largest rating first
+sorted_index = np.argsort(-y_pu, axis=0).reshape(-1).tolist()  # negate to get largest rating first
 sorted_ypu = y_pu[sorted_index]
 sorted_items = item_vecs[sorted_index]  # using unscaled vectors for display
 
-print_pred_movies(sorted_ypu, sorted_items, movie_dict, maxcount=50)
+recsysNN_utils.print_pred_movies(sorted_ypu, sorted_items, movie_dict, maxcount=50)
 
 
 # 2. -----------------------------------------------------------------------------------------------------------------
 uid = 7
 # form a set of user vectors. This is the same vector, transformed and repeated.
-user_vecs, y_vecs = get_user_vecs(uid, user_train_unscaled, item_vecs, user_to_genre)
+user_vecs, y_vecs = recsysNN_utils.get_user_vecs(uid, user_train_unscaled, item_vecs, user_to_genre)
 
 # scale our user and item vectors
 suser_vecs = scalerUser.transform(user_vecs)
@@ -155,14 +173,14 @@ y_p = model.predict([suser_vecs[:, u_s:], sitem_vecs[:, i_s:]])
 y_pu = scalerTarget.inverse_transform(y_p)
 
 # sort the results, highest prediction first
-sorted_index = np.argsort(-y_pu,axis=0).reshape(-1).tolist()  # negate to get largest rating first
+sorted_index = np.argsort(-y_pu, axis=0).reshape(-1).tolist()  # negate to get largest rating first
 sorted_ypu = y_pu[sorted_index]
 sorted_items = item_vecs[sorted_index]  # using unscaled vectors for display
 sorted_user = user_vecs[sorted_index]
 sorted_y = y_vecs[sorted_index]
 
 # print sorted predictions for movies rated by the user
-print_existing_user(sorted_ypu, sorted_y.reshape(-1, 1), sorted_user, sorted_items, ivs, uvs, movie_dict, maxcount=50)
+recsysNN_utils.print_existing_user(sorted_ypu, sorted_y.reshape(-1, 1), sorted_user, sorted_items, ivs, uvs, movie_dict, maxcount=50)
 
 
 # 3. -----------------------------------------------------------------------------------------------------------------
@@ -188,6 +206,17 @@ def sq_dist(a, b):
 # ---------------------------------------------------------
 
 
+a1 = np.array([1.0, 2.0, 3.0])
+b1 = np.array([1.0, 2.0, 3.0])
+a2 = np.array([1.1, 2.1, 3.1])
+b2 = np.array([1.0, 2.0, 3.0])
+a3 = np.array([0, 1, 0])
+b3 = np.array([1, 0, 0])
+print(f"squared distance between a1 and b1: {sq_dist(a1, b1):0.3f}")
+print(f"squared distance between a2 and b2: {sq_dist(a2, b2):0.3f}")
+print(f"squared distance between a3 and b3: {sq_dist(a3, b3):0.3f}")
+
+
 # input layer
 input_item_m = tf.keras.layers.Input(shape=num_item_features)
 # use the trained item_NN
@@ -198,10 +227,11 @@ model_m = tf.keras.Model(input_item_m, vm_m)
 model_m.summary()
 
 scaled_item_vecs = scalerItem.transform(item_vecs)
-vms = model_m.predict(scaled_item_vecs[:,i_s:])
+vms = model_m.predict(scaled_item_vecs[:, i_s:])
 print(f"size of all predicted movie feature vectors: {vms.shape}")
 
 
+# ---------------------------------------------------------
 count = 50  # number of movies to display
 dim = len(vms)
 dist = np.zeros((dim, dim))

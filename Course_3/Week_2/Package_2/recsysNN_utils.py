@@ -25,8 +25,8 @@ def load_data():
         reader = csv.reader(csvfile, delimiter=',', quotechar='"')
         for line in reader:
             if count == 0:
-                count += 1  #skip header
-                #print(line) print
+                count += 1  # skip header
+                # print(line) print
             else:
                 count += 1
                 movie_id = int(line[0])

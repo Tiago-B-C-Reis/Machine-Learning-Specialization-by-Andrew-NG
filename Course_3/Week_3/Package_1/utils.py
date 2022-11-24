@@ -11,7 +11,7 @@ def generate_rewards(num_states, each_step_reward, terminal_left_reward, termina
     return rewards 
 
 
-def generate_transition_prob(num_states, num_actions, misstep_prob = 0):
+def generate_transition_prob(num_states, num_actions, misstep_prob=0):
     # 0 is left, 1 is right 
     
     p = np.zeros((num_states, num_actions, num_states))
@@ -22,7 +22,7 @@ def generate_transition_prob(num_states, num_actions, misstep_prob = 0):
             p[i, 1, i-1] = misstep_prob
             
         if i != num_states - 1:
-            p[i, 1, i+1] = 1  - misstep_prob
+            p[i, 1, i+1] = 1 - misstep_prob
             p[i, 0, i+1] = misstep_prob
         
     # Terminal States    
@@ -31,9 +31,11 @@ def generate_transition_prob(num_states, num_actions, misstep_prob = 0):
     
     return p
 
+
 def calculate_Q_value(num_states, rewards, transition_prob, gamma, V_states, state, action):
     q_sa = rewards[state] + gamma * sum([transition_prob[state, action, sp] * V_states[sp] for sp in range(num_states)])
     return q_sa
+
 
 def evaluate_policy(num_states, rewards, transition_prob, gamma, policy):
     max_policy_eval = 10000 
@@ -52,6 +54,7 @@ def evaluate_policy(num_states, rewards, transition_prob, gamma, policy):
             break
             
     return V
+
 
 def improve_policy(num_states, num_actions, rewards, transition_prob, gamma, V, policy):
     policy_stable = True
@@ -76,12 +79,14 @@ def get_optimal_policy(num_states, num_actions, rewards, transition_prob, gamma)
         policy_stable = True
 
         V = evaluate_policy(num_states, rewards, transition_prob, gamma, optimal_policy)
-        optimal_policy, policy_stable = improve_policy(num_states, num_actions, rewards, transition_prob, gamma, V, optimal_policy)
+        optimal_policy, policy_stable = improve_policy(num_states, num_actions, rewards,
+                                                       transition_prob, gamma, V, optimal_policy)
 
         if policy_stable:
             break
             
     return optimal_policy, V
+
 
 def calculate_Q_values(num_states, rewards, transition_prob, gamma, optimal_policy):
     # Left and then optimal policy
@@ -90,7 +95,7 @@ def calculate_Q_values(num_states, rewards, transition_prob, gamma, optimal_poli
     # Right and optimal policy
     q_right_star = np.zeros(num_states)
     
-    V_star =  evaluate_policy(num_states, rewards, transition_prob, gamma, optimal_policy)
+    V_star = evaluate_policy(num_states, rewards, transition_prob, gamma, optimal_policy)
 
     for s in range(num_states):
         q_left_star[s] = calculate_Q_value(num_states, rewards, transition_prob, gamma, V_star, s, 0)
@@ -104,12 +109,12 @@ def plot_optimal_policy_return(num_states, optimal_policy, rewards, V):
     actions[0] = ""
     actions[-1] = ""
     
-    fig, ax = plt.subplots(figsize=(2*num_states,2))
+    fig, ax = plt.subplots(figsize=(2*num_states, 2))
 
     for i in range(num_states):
         ax.text(i+0.5, 0.5, actions[i], fontsize=32, ha="center", va="center", color="orange")
         ax.text(i+0.5, 0.25, rewards[i], fontsize=16, ha="center", va="center", color="black")
-        ax.text(i+0.5, 0.75, round(V[i],2), fontsize=16, ha="center", va="center", color="firebrick")
+        ax.text(i+0.5, 0.75, round(V[i], 2), fontsize=16, ha="center", va="center", color="firebrick")
         ax.axvline(i, color="black")
     ax.set_xlim([0, num_states])
     ax.set_ylim([0, 1])
@@ -117,14 +122,15 @@ def plot_optimal_policy_return(num_states, optimal_policy, rewards, V):
     ax.set_xticklabels([])
     ax.set_yticklabels([])
     ax.tick_params(axis='both', which='both', length=0)
-    ax.set_title("Optimal policy",fontsize = 16)
+    ax.set_title("Optimal policy", fontsize=16)
+
 
 def plot_q_values(num_states, q_left_star, q_right_star, rewards):
-    fig, ax = plt.subplots(figsize=(3*num_states,2))
+    fig, ax = plt.subplots(figsize=(3*num_states, 2))
 
     for i in range(num_states):
-        ax.text(i+0.2, 0.6, round(q_left_star[i],2), fontsize=16, ha="center", va="center", color="firebrick")
-        ax.text(i+0.8, 0.6, round(q_right_star[i],2), fontsize=16, ha="center", va="center", color="firebrick")
+        ax.text(i+0.2, 0.6, round(q_left_star[i],2 ), fontsize=16, ha="center", va="center", color="firebrick")
+        ax.text(i+0.8, 0.6, round(q_right_star[i], 2), fontsize=16, ha="center", va="center", color="firebrick")
 
         ax.text(i+0.5, 0.25, rewards[i], fontsize=20, ha="center", va="center", color="black")
         ax.axvline(i, color="black")
@@ -134,7 +140,8 @@ def plot_q_values(num_states, q_left_star, q_right_star, rewards):
     ax.set_xticklabels([])
     ax.set_yticklabels([])
     ax.tick_params(axis='both', which='both', length=0)
-    ax.set_title("Q(s,a)",fontsize = 16)
+    ax.set_title("Q(s,a)", fontsize=16)
+
 
 def generate_visualization(terminal_left_reward, terminal_right_reward, each_step_reward, gamma, misstep_prob):
     num_states = 6
